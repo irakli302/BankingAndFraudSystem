@@ -36,6 +36,7 @@ public class Money implements Comparable<Money> {
         if(!this.currency.toString().equals(other.currency.toString())){
             throw new CurrencyMismatchException("Currency mismatch, please try again with correct currency!");
         }
+        if (other == null) throw new IllegalArgumentException("money cannot be null");
     }
 
     public void AddMoney(Money other) throws CurrencyMismatchException {
