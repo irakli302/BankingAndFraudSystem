@@ -16,7 +16,7 @@ public class Money implements Comparable<Money> {
             throw new IllegalArgumentException("Currency cannot be null!");
         }
 
-        if(amount==null){
+        if(amount==null || (amount.compareTo(BigDecimal.ZERO) <= 0)){
             throw new IllegalArgumentException("Amount cannot be null!");
         }
 
