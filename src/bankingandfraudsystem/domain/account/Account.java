@@ -119,5 +119,5 @@ public abstract class Account {
         status = AccountStatus.CLOSED;
     }
 
-    public abstract boolean canWithDraw(Money amount);
+    public abstract boolean canWithDraw(Money amount) throws CurrencyMismatchException;
 }

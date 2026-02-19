@@ -44,10 +44,20 @@ public class Money implements Comparable<Money> {
         this.Amount = this.Amount.add(other.Amount);
     }
 
+    public Money add_Money(Money other) throws CurrencyMismatchException{
+        CurrencyChecker(other);
+        return new Money(this.currency, this.Amount.add(other.Amount));
+    }
+
 
     public void Subtract(Money other) throws CurrencyMismatchException {
         CurrencyChecker(other);
         this.Amount = this.Amount.add(other.Amount);
+    }
+
+    public Money subtract1(Money other) throws CurrencyMismatchException {
+        CurrencyChecker(other);
+        return new Money(this.currency, this.Amount.subtract(other.Amount));
     }
 
     public void Multiply(BigDecimal factor) {
