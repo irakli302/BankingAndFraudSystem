@@ -1,12 +1,14 @@
 package bankingandfraudsystem.util;
 
+import bankingandfraudsystem.Exception.CurrencyMismatchException;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
 public class Money implements Comparable<Money> {
     private final Currency currency;
-    private final BigDecimal Amount;
+    private BigDecimal Amount;
 
     public Money(final Currency curr, final BigDecimal amount){
 
@@ -30,23 +32,26 @@ public class Money implements Comparable<Money> {
         return this.Amount;
     }
 
-    public Money AddMoney(Money other) throws CurrencyMismatchException {
+    private void CurrencyChecker(Money other) throws CurrencyMismatchException {
         if(!this.currency.toString().equals(other.currency.toString())){
             throw new CurrencyMismatchException("Currency mismatch, please try again with correct currency!");
         }
-        return new Money(this.currency, this.Amount.add(other.Amount));
     }
 
-    public Money Subtract(Money other) throws CurrencyMismatchException {
-        if(!this.currency.toString().equals(other.currency.toString())){
-            throw new CurrencyMismatchException("Currency mismatch, please try again with correct currency!");
-        }
-        return new Money(this.currency, this.Amount.subtract(other.Amount));
+    public void AddMoney(Money other) throws CurrencyMismatchException {
+        CurrencyChecker(other);
+        this.Amount = this.Amount.add(other.Amount);
     }
 
-    public Money Multiply(BigDecimal factor) {
+
+    public void Subtract(Money other) throws CurrencyMismatchException {
+        CurrencyChecker(other);
+        this.Amount = this.Amount.add(other.Amount);
+    }
+
+    public void Multiply(BigDecimal factor) {
         if(factor.compareTo(BigDecimal.ZERO)<=0) throw new IllegalArgumentException("Enter valid factor!");
-        return new Money(this.currency, this.Amount.multiply(factor));
+        this.Amount = this.Amount.multiply(factor);
     }
 
     @Override

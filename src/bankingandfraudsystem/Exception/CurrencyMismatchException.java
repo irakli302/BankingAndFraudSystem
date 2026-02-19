@@ -1,4 +1,4 @@
-package bankingandfraudsystem.util;
+package bankingandfraudsystem.Exception;
 
 public class CurrencyMismatchException extends Exception {
     public CurrencyMismatchException() {
