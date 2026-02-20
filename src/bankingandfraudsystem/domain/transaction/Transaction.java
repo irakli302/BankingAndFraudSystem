@@ -1,5 +1,6 @@
 package bankingandfraudsystem.domain.transaction;
 
+import bankingandfraudsystem.Exception.CurrencyMismatchException;
 import bankingandfraudsystem.domain.account.AccountStatus;
 import bankingandfraudsystem.util.Money;
 
@@ -26,7 +27,7 @@ public abstract class Transaction {
     }
 
     public abstract TransactionType type();
-    protected abstract void apply();
+    protected abstract void apply() throws CurrencyMismatchException;
 
     public UUID getId() {
         return this.ID;
