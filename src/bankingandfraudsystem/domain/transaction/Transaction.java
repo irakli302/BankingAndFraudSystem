@@ -1,5 +1,6 @@
 package bankingandfraudsystem.domain.transaction;
 
+import bankingandfraudsystem.domain.account.AccountStatus;
 import bankingandfraudsystem.util.Money;
 
 import java.time.Instant;
@@ -45,6 +46,26 @@ public abstract class Transaction {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public void approve() {
+        if(status != TransactionStatus.CREATED) throw new IllegalStateException("Only Created transaction can be APPROVED!");
+        this.status = TransactionStatus.APPROVED;
+    }
+
+    public void markReview() {
+        if(status != TransactionStatus.CREATED) throw new IllegalStateException("Only Created transaction can be  marked REVIEW!");
+        this.status = TransactionStatus.REVIEW;
+    }
+
+    public void decline() {
+        if(status != TransactionStatus.CREATED) throw new IllegalStateException("Only Created transaction can be  DECLINED!");
+        this.status = TransactionStatus.DECLINED;
+    }
+
+    public void markPosted() {
+        if(status != TransactionStatus.APPROVED) throw new IllegalStateException("Only APPROVED transaction can be mark POSTED!");
+        this.status = TransactionStatus.POSTED;
     }
 
 }
