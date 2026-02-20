@@ -49,23 +49,31 @@ public abstract class Transaction {
     }
 
     public void approve() {
+        checkPosted();
         if(status != TransactionStatus.CREATED) throw new IllegalStateException("Only Created transaction can be APPROVED!");
         this.status = TransactionStatus.APPROVED;
     }
 
     public void markReview() {
+        checkPosted();
         if(status != TransactionStatus.CREATED) throw new IllegalStateException("Only Created transaction can be  marked REVIEW!");
         this.status = TransactionStatus.REVIEW;
     }
 
     public void decline() {
+        checkPosted();
         if(status != TransactionStatus.CREATED) throw new IllegalStateException("Only Created transaction can be  DECLINED!");
         this.status = TransactionStatus.DECLINED;
     }
 
     public void markPosted() {
+        checkPosted();
         if(status != TransactionStatus.APPROVED) throw new IllegalStateException("Only APPROVED transaction can be mark POSTED!");
         this.status = TransactionStatus.POSTED;
+    }
+
+    private void checkPosted() {
+        if(status == TransactionStatus.POSTED) throw new IllegalStateException("Transaction cannot be modified!");
     }
 
 }
