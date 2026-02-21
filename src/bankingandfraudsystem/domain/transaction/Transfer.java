@@ -25,6 +25,14 @@ public class Transfer extends Transaction {
         this.to = toAcc;
     }
 
+    public Account getFromAccount() {
+        return this.from;
+    }
+
+    public  Account getToAccount() {
+        return this.to;
+    }
+
     @Override
     public TransactionType type() {
         return TransactionType.TRANSFER;
