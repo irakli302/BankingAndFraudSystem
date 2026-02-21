@@ -39,7 +39,7 @@ public class Transfer extends Transaction {
     }
 
     @Override
-    protected void apply() throws CurrencyMismatchException {
+    public void apply() throws CurrencyMismatchException {
         if(this.getStatus() != TransactionStatus.APPROVED) throw new IllegalStateException("Transaction status must be APPROVED!");
 
         from.withDraw(getAmount());

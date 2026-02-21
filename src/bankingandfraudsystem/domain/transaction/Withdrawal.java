@@ -26,7 +26,7 @@ public class Withdrawal extends Transaction{
     }
 
     @Override
-    protected void apply() throws CurrencyMismatchException {
+    public void apply() throws CurrencyMismatchException {
         from.withDraw(getAmount());
     }
 }

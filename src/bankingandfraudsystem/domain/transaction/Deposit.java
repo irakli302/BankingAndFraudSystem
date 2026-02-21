@@ -26,7 +26,7 @@ public class Deposit extends Transaction {
     }
 
     @Override
-    protected void apply() throws CurrencyMismatchException {
+    public void apply() throws CurrencyMismatchException {
         to.deposit(getAmount());
     }
 }

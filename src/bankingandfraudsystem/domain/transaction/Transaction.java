@@ -28,7 +28,7 @@ public abstract class Transaction {
     }
 
     public abstract TransactionType type();
-    protected abstract void apply() throws CurrencyMismatchException;
+    public abstract void apply() throws CurrencyMismatchException;
 
     public UUID getId() {
         return this.ID;
