@@ -49,6 +49,10 @@ public abstract class Transaction {
         return this.description;
     }
 
+    public void setStatus(TransactionStatus st) {
+        this.status = st;
+    }
+
     public void approve() {
         checkPosted();
         if(status != TransactionStatus.CREATED) throw new IllegalStateException("Only Created transaction can be APPROVED!");
