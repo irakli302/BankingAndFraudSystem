@@ -51,7 +51,7 @@ public class Transfer extends Transaction {
     @Override
     public boolean involves(Account acc) {
         if (acc == null) throw new IllegalArgumentException("Account cannot be null!");
-        return to.getID().equals(acc.getID()) || from.getID().equals(acc.getID());
+        return to.equals(acc) || from.equals(acc);
     }
 
     @Override

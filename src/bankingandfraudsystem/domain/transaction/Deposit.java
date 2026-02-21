@@ -33,6 +33,6 @@ public class Deposit extends Transaction {
     @Override
     public boolean involves(Account account) {
         if (account == null) throw new IllegalArgumentException("Account cannot be null!");
-        return to.getID().equals(account.getID());
+        return to.equals(account);
     }
 }
