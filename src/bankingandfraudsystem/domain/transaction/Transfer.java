@@ -37,6 +37,6 @@ public class Transfer extends Transaction {
         from.withDraw(getAmount());
         to.deposit(getAmount());
 
-        this.() = TransactionStatus.APPROVED;
+        setStatus(TransactionStatus.APPROVED);
     }
 }
