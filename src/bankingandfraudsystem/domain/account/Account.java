@@ -6,6 +6,7 @@ import bankingandfraudsystem.util.Currency;
 import bankingandfraudsystem.util.Money;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.UUID;
 
 public abstract class Account {
@@ -119,6 +120,18 @@ public abstract class Account {
         if(!Balance.isZero()) throw new IllegalStateException("To CLOSE account, Balance must be zero!");
 
         status = AccountStatus.CLOSED;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        Account other = (Account) o;
+        return this.ID.equals(other.ID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.ID);
     }
 
     public abstract boolean canWithDraw(Money amount) throws CurrencyMismatchException;
