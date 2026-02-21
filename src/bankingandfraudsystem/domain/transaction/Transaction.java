@@ -29,6 +29,7 @@ public abstract class Transaction {
 
     public abstract TransactionType type();
     public abstract void apply() throws CurrencyMismatchException;
+    public abstract boolean involves(Account acc);
 
     public UUID getId() {
         return this.ID;

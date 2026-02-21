@@ -29,4 +29,10 @@ public class Deposit extends Transaction {
     public void apply() throws CurrencyMismatchException {
         to.deposit(getAmount());
     }
+
+    @Override
+    public boolean involves(Account account) {
+        if (account == null) throw new IllegalArgumentException("Account cannot be null!");
+        return to.getID().equals(account.getID());
+    }
 }

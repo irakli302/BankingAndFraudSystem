@@ -48,8 +48,10 @@ public class Transfer extends Transaction {
         setStatus(TransactionStatus.APPROVED);
     }
 
+    @Override
     public boolean involves(Account acc) {
-        return to.getID() == acc.getID() || from.getID() == acc.getID();
+        if (acc == null) throw new IllegalArgumentException("Account cannot be null!");
+        return to.getID().equals(acc.getID()) || from.getID().equals(acc.getID());
     }
 
     @Override
