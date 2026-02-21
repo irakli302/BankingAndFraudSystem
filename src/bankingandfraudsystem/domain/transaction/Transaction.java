@@ -1,6 +1,7 @@
 package bankingandfraudsystem.domain.transaction;
 
 import bankingandfraudsystem.Exception.CurrencyMismatchException;
+import bankingandfraudsystem.domain.account.Account;
 import bankingandfraudsystem.domain.account.AccountStatus;
 import bankingandfraudsystem.util.Money;
 

@@ -47,4 +47,13 @@ public class Transfer extends Transaction {
 
         setStatus(TransactionStatus.APPROVED);
     }
+
+    public boolean involves(Account acc) {
+        return to.getID() == acc.getID() || from.getID() == acc.getID();
+    }
+
+    @Override
+    public String toString() {
+        return "TRANSFER " + getAmount() + " " + getAmount().getCurrency() + " from <" + from.getID() + "> to <" + to.getID() + "> " + getStatus() + ".";
+    }
 }
