@@ -81,6 +81,8 @@ public abstract class Account {
     public void deposit(Money amount) throws CurrencyMismatchException {
         if(this.status == AccountStatus.CLOSED) throw new IllegalStateException("Account is CLOSED!");
 
+        if(amount.isNegative()) throw new IllegalArgumentException("Amount cannot be negative");
+
         if(amount.getCurrency() != this.currency) throw new IllegalArgumentException("Currency mismatch, try again!");
 
         this.Balance.AddMoney(amount);
