@@ -1,6 +1,7 @@
 package bankingandfraudsystem.domain.ledger;
 
 import bankingandfraudsystem.Exception.CurrencyMismatchException;
+import bankingandfraudsystem.domain.account.Account;
 import bankingandfraudsystem.domain.transaction.Transaction;
 import bankingandfraudsystem.domain.transaction.TransactionStatus;
 
@@ -19,11 +20,23 @@ public class Ledger {
         tx.apply();
         tx.markPosted();
         history.add(tx);
-
     }
 
     public List<Transaction> getHistory() {
         return Collections.unmodifiableList(this.history);
+    }
+
+    public List<Transaction> statementFor(Account account) {
+        if(account == null) throw new IllegalArgumentException("Account cannot be null!");
+
+        List<Transaction>involved = new ArrayList<Transaction>();
+
+        for(Transaction tx : history) {
+            if(tx.involves(account))
+                involved.add(tx);
+        }
+
+        return involved;
     }
 
     public boolean isPosted(UUID id) {
@@ -34,6 +47,4 @@ public class Ledger {
         }
         return false;
     }
-
-
 }
