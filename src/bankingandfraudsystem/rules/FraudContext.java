@@ -1,5 +1,6 @@
 package bankingandfraudsystem.rules;
 
+import bankingandfraudsystem.Exception.CurrencyMismatchException;
 import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.domain.transaction.Transaction;
 import bankingandfraudsystem.util.Currency;
@@ -60,14 +61,20 @@ public class FraudContext {
         return withInMinutes(minutes).size();
     }
 
-    public Money sumWithinMinutes(int minutes, Currency currency) {
+    public Money sumWithinMinutes(int minutes, Currency currency) throws CurrencyMismatchException {
         if(currency == null) throw new IllegalArgumentException("Currency cannot be null!");
 
         List<Transaction>lst = new ArrayList<>(withInMinutes(minutes));
 
         Money sum = Money.zero(currency);
 
-        
+        for(Transaction tx : lst) {
+            Money money = tx.getAmount();
+            if(!money.getCurrency().equals(currency)) throw new CurrencyMismatchException("Currency mismatch!");
+            sum=sum.add_Money(tx.getAmount());
+        }
+
+        return sum;
     }
 
     public Customer getCustomer() {
