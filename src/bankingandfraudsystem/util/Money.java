@@ -73,6 +73,10 @@ public class Money implements Comparable<Money> {
         return this.Amount.compareTo(other.Amount);
     }
 
+    public static Money zero(Currency currency) {
+        return new Money(currency, BigDecimal.ZERO);
+    }
+
     public boolean isZero() {
         return this.Amount.compareTo(BigDecimal.ZERO)==0;
     }

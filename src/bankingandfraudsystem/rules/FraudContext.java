@@ -2,6 +2,8 @@ package bankingandfraudsystem.rules;
 
 import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.domain.transaction.Transaction;
+import bankingandfraudsystem.util.Currency;
+import bankingandfraudsystem.util.Money;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -58,7 +60,15 @@ public class FraudContext {
         return withInMinutes(minutes).size();
     }
 
-    
+    public Money sumWithinMinutes(int minutes, Currency currency) {
+        if(currency == null) throw new IllegalArgumentException("Currency cannot be null!");
+
+        List<Transaction>lst = new ArrayList<>(withInMinutes(minutes));
+
+        Money sum = Money.zero(currency);
+
+        
+    }
 
     public Customer getCustomer() {
         return this.customer;
