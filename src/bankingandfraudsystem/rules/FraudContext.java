@@ -5,6 +5,7 @@ import bankingandfraudsystem.domain.transaction.Transaction;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -28,5 +29,15 @@ public class FraudContext {
         this.postedHistory = List.copyOf(new_lst);
     }
 
-    
+    public Customer getCustomer() {
+        return this.customer;
+    }
+
+    public Instant getNow() {
+        return this.now;
+    }
+
+    public List<Transaction> getPostedHistory() {
+        return Collections.unmodifiableList(this.postedHistory);
+    }
 }
