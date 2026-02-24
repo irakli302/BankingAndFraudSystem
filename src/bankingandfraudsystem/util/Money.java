@@ -68,7 +68,7 @@ public class Money implements Comparable<Money> {
 
     @Override
     public int compareTo(Money other){
-        if(!this.currency.toString().equals(other.currency.toString())){
+        if(this.currency != other.currency){
             throw new IllegalArgumentException("Currency mismatch, please try again with correct currency!");
         }
         return this.Amount.compareTo(other.Amount);
