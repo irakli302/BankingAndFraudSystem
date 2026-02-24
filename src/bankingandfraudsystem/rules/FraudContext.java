@@ -3,6 +3,7 @@ package bankingandfraudsystem.rules;
 import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.domain.transaction.Transaction;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,11 +33,25 @@ public class FraudContext {
     public List<Transaction>lastN(int n) {
         if(n <= 0) throw new IllegalArgumentException("N must be greater than 0, please try again!");
 
-        int size = this.postedHistory.size();
+        int size = getPostedHistory().size();
 
         if(n >= size) return List.copyOf(this.postedHistory);
 
         return List.copyOf(this.postedHistory.subList(size-n,size));
+    }
+
+    public List<Transaction> withInMinutes(int minutes) {
+        if(minutes <= 0) throw new IllegalArgumentException("Minutes must be positive, please try again!");
+
+        Instant inTime = Instant.now().minus(Duration.ofMinutes(minutes));
+
+        List<Transaction>lst = new ArrayList<>();
+
+        for (Transaction tx : this.postedHistory) {
+            if(tx.getCreatedAt().isAfter(inTime)) lst.add(tx);
+        }
+
+        return Collections.unmodifiableList(lst);
     }
 
     public Customer getCustomer() {
