@@ -27,6 +27,18 @@ public class RuleResult {
         return  new RuleResult(Decision.BLOCK, reason);
     }
 
+    public boolean isAllow() {
+        return this.decision == Decision.ALLOW;
+    }
+
+    public boolean isReview() {
+        return this.decision == Decision.REVIEW;
+    }
+
+    public boolean isBlock() {
+        return this.decision == Decision.BLOCK;
+    }
+
     public Decision getDecision() {
         return this.decision;
     }
