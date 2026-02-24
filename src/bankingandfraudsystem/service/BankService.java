@@ -9,9 +9,9 @@ import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.domain.ledger.Ledger;
 import bankingandfraudsystem.domain.transaction.Deposit;
 import bankingandfraudsystem.domain.transaction.Transaction;
+import bankingandfraudsystem.domain.transaction.Transfer;
 import bankingandfraudsystem.domain.transaction.Withdrawal;
-import bankingandfraudsystem.rules.FraudContext;
-import bankingandfraudsystem.rules.FraudEngine;
+import bankingandfraudsystem.rules.*;
 import bankingandfraudsystem.util.Money;
 import bankingandfraudsystem.util.Currency;
 
@@ -99,6 +99,49 @@ public class BankService {
         Account account = requireAccount(accountID);
         Transaction tx = new Withdrawal(amount,description,account);
         FraudContext fraudContext = new FraudContext(account.getOwner(),ledger.getHistory());
-        attempts.add(tx);
+        RuleResult rule = this.fraudEngine.assess(tx,fraudContext);
+        if(rule.isAllow()) {
+            tx.approve();
+            ledger.post(tx);
+        }
+        else if(rule.isReview()){
+            tx.markReview();
+            attempts.add(tx);
+        }
+        else if(rule.isBlock()){
+            tx.decline();
+            attempts.add(tx);
+        }
+        return tx;
+    }
+
+    public Transaction transfer(UUID fromID, UUID toID, Money amount, String description) throws CurrencyMismatchException {
+        Account fromAcc = requireAccount(fromID);
+        Account toAcc = requireAccount(toID);
+        Transaction tx = new Transfer(amount,description,fromAcc,toAcc);
+        FraudContext fraudContext = new FraudContext(fromAcc.getOwner(),ledger.getHistory());
+        RuleResult rule = this.fraudEngine.assess(tx,fraudContext);
+
+        if(rule.isAllow()) {
+            tx.approve();
+            ledger.post(tx);
+        }
+        else if(rule.isReview()){
+            tx.markReview();
+            attempts.add(tx);
+        }
+        else if(rule.isBlock()){
+            tx.decline();
+            attempts.add(tx);
+        }
+        return tx;
+    }
+
+    public List<Transaction>listPostedTransactions() {
+        return this.ledger.getHistory();
+    }
+
+    public List<Transaction>listAttempts() {
+        return List.copyOf(this.attempts);
     }
 }
