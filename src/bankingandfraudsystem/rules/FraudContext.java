@@ -29,6 +29,16 @@ public class FraudContext {
         this.postedHistory = List.copyOf(new_lst);
     }
 
+    public List<Transaction>lastN(int n) {
+        if(n <= 0) throw new IllegalArgumentException("N must be greater than 0, please try again!");
+
+        int size = this.postedHistory.size();
+
+        if(n >= size) return List.copyOf(this.postedHistory);
+
+        return List.copyOf(this.postedHistory.subList(size-n,size));
+    }
+
     public Customer getCustomer() {
         return this.customer;
     }
