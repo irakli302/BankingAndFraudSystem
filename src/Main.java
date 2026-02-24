@@ -1,3 +1,4 @@
+import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.util.Currency;
 import bankingandfraudsystem.Exception.CurrencyMismatchException;
 import bankingandfraudsystem.util.Money;
@@ -12,8 +13,10 @@ public class Main {
             money1.AddMoney(money2);
             money1.Multiply(new BigDecimal("2"));
             boolean ans = money1.equals(money2);
-            System.out.println(ans);
-            System.out.println(money1);
+//            System.out.println(ans);
+//            System.out.println(money1);
+            Customer customer = new Customer("Irakli Dzandzava");
+            System.out.println(customer);
         }catch(CurrencyMismatchException e) {
             System.out.println(e.getMessage());
         }catch (Exception e) {
