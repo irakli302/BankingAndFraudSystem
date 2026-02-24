@@ -1,12 +1,16 @@
 package bankingandfraudsystem.service;
 
+import bankingandfraudsystem.Exception.CurrencyMismatchException;
 import bankingandfraudsystem.domain.account.Account;
 import bankingandfraudsystem.domain.account.AccountStatus;
 import bankingandfraudsystem.domain.account.CheckingAccount;
 import bankingandfraudsystem.domain.account.SavingsAccount;
 import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.domain.ledger.Ledger;
+import bankingandfraudsystem.domain.transaction.Deposit;
 import bankingandfraudsystem.domain.transaction.Transaction;
+import bankingandfraudsystem.domain.transaction.Withdrawal;
+import bankingandfraudsystem.rules.FraudContext;
 import bankingandfraudsystem.rules.FraudEngine;
 import bankingandfraudsystem.util.Money;
 import bankingandfraudsystem.util.Currency;
@@ -80,5 +84,21 @@ public class BankService {
 
     public List<Account>listAccounts() {
         return List.copyOf(accounts.values());
+    }
+
+    public Transaction deposit(UUID accountID, Money amount, String description) throws CurrencyMismatchException {
+        Account account = requireAccount(accountID);
+        Transaction tx = new Deposit(account,amount,description);
+        attempts.add(tx);
+        tx.approve();
+        ledger.post(tx);
+        return tx;
+    }
+
+    public Transaction withdraw(UUID accountID, Money amount, String description) throws CurrencyMismatchException {
+        Account account = requireAccount(accountID);
+        Transaction tx = new Withdrawal(amount,description,account);
+        FraudContext fraudContext = new FraudContext(account.getOwner(),ledger.getHistory());
+        attempts.add(tx);
     }
 }

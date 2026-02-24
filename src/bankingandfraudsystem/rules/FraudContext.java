@@ -33,6 +33,19 @@ public class FraudContext {
         this.postedHistory = List.copyOf(new_lst);
     }
 
+    public FraudContext(Customer cus, List<Transaction>postedHistory) {
+        if(cus == null) throw new IllegalArgumentException("Customer cannot be null!");
+
+        if(postedHistory == null) throw new IllegalArgumentException("Posted history cannot be null!");
+
+        this.customer = cus;
+        this.now = Instant.now();
+
+        List<Transaction>new_lst = new ArrayList<>(postedHistory);
+        new_lst.sort(Comparator.comparing(Transaction::getCreatedAt));
+        this.postedHistory = List.copyOf(new_lst);
+    }
+
     public List<Transaction>lastN(int n) {
         if(n <= 0) throw new IllegalArgumentException("N must be greater than 0, please try again!");
 
