@@ -1,5 +1,6 @@
 package bankingandfraudsystem.rules;
 
+import bankingandfraudsystem.Exception.CurrencyMismatchException;
 import bankingandfraudsystem.domain.transaction.Transaction;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class FraudEngine {
         this.rules = List.copyOf(fraudRules);
     }
 
-    public RuleResult assess(Transaction tx, FraudContext ctx) {
+    public RuleResult assess(Transaction tx, FraudContext ctx) throws CurrencyMismatchException {
         if(tx == null) throw new IllegalArgumentException("Transaction cannot be null!");
 
         if(ctx == null) throw new IllegalArgumentException("Fraud Context cannot be null!");
