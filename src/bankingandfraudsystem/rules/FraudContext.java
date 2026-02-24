@@ -54,6 +54,12 @@ public class FraudContext {
         return Collections.unmodifiableList(lst);
     }
 
+    public int countWithInMinutes(int minutes) {
+        return withInMinutes(minutes).size();
+    }
+
+    
+
     public Customer getCustomer() {
         return this.customer;
     }
