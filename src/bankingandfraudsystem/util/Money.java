@@ -16,7 +16,7 @@ public class Money implements Comparable<Money> {
             throw new IllegalArgumentException("Currency cannot be null!");
         }
 
-        if(amount==null || (amount.compareTo(BigDecimal.ZERO) <= 0)){
+        if(amount==null || (amount.compareTo(BigDecimal.ZERO) < 0)){
             throw new IllegalArgumentException("Amount cannot be null!");
         }
 
@@ -33,10 +33,11 @@ public class Money implements Comparable<Money> {
     }
 
     private void CurrencyChecker(Money other) throws CurrencyMismatchException {
+        if (other == null) throw new IllegalArgumentException("money cannot be null");
+
         if(!this.currency.toString().equals(other.currency.toString())){
             throw new CurrencyMismatchException("Currency mismatch, please try again with correct currency!");
         }
-        if (other == null) throw new IllegalArgumentException("money cannot be null");
     }
 
     public void AddMoney(Money other) throws CurrencyMismatchException {
@@ -52,7 +53,7 @@ public class Money implements Comparable<Money> {
 
     public void Subtract(Money other) throws CurrencyMismatchException {
         CurrencyChecker(other);
-        this.Amount = this.Amount.add(other.Amount);
+        this.Amount = this.Amount.subtract(other.Amount);
     }
 
     public Money subtract1(Money other) throws CurrencyMismatchException {

@@ -46,7 +46,7 @@ public class FraudContext {
     public List<Transaction> withInMinutes(int minutes) {
         if(minutes <= 0) throw new IllegalArgumentException("Minutes must be positive, please try again!");
 
-        Instant inTime = Instant.now().minus(Duration.ofMinutes(minutes));
+        Instant inTime = this.now.minus(Duration.ofMinutes(minutes));
 
         List<Transaction>lst = new ArrayList<>();
 
@@ -75,6 +75,16 @@ public class FraudContext {
         }
 
         return sum;
+    }
+
+    public boolean hasAnyTransaction() {
+        return this.postedHistory.size() > 0;
+    }
+
+    public Transaction mostRecent() {
+        if(this.postedHistory.isEmpty()) return null;
+
+        return this.postedHistory.getLast();
     }
 
     public Customer getCustomer() {
