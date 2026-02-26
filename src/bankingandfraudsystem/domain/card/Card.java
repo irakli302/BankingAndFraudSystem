@@ -97,4 +97,32 @@ public abstract class Card {
             this.spendDate = today;
         }
     }
+
+    public UUID getId() {
+        return this.id;
+    }
+
+    public Customer getOwner() {
+        return this.owner;
+    }
+
+    public Account getLinkedAccount() {
+        return this.linkedAccount;
+    }
+
+    public CardStatus getStatus() {
+        return this.status;
+    }
+
+    public Money getDailyLimit() {
+        return this.dailyLimit;
+    }
+
+    public Money getSpentToday() {
+        return this.spentToday;
+    }
+
+    public LocalDate getSpendDate() {
+        return this.spendDate;
+    }
 }
