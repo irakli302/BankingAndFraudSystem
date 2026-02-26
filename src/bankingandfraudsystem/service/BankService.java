@@ -98,7 +98,7 @@ public class BankService {
     public Transaction withdraw(UUID accountID, Money amount, String description) throws CurrencyMismatchException {
         Account account = requireAccount(accountID);
         Transaction tx = new Withdrawal(amount,description,account);
-        FraudContext fraudContext = new FraudContext(account.getOwner(),ledger.getHistory());
+        FraudContext fraudContext = new FraudContext(account.getOwner(),customerHistory(account.getOwner()));
         RuleResult rule = this.fraudEngine.assess(tx,fraudContext);
         if(rule.isAllow()) {
             tx.approve();
@@ -119,7 +119,7 @@ public class BankService {
         Account fromAcc = requireAccount(fromID);
         Account toAcc = requireAccount(toID);
         Transaction tx = new Transfer(amount,description,fromAcc,toAcc);
-        FraudContext fraudContext = new FraudContext(fromAcc.getOwner(),ledger.getHistory());
+        FraudContext fraudContext = new FraudContext(fromAcc.getOwner(),customerHistory(fromAcc.getOwner()));
         RuleResult rule = this.fraudEngine.assess(tx,fraudContext);
 
         if(rule.isAllow()) {
