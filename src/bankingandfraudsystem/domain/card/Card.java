@@ -5,8 +5,7 @@ import bankingandfraudsystem.domain.account.Account;
 import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.util.Money;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
+
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -41,12 +40,12 @@ public abstract class Card {
         this.linkedAccount = linkedAcc;
         this.dailyLimit = dailylimit;
         this.status = CardStatus.ACTIVE;
-        this.spentToday = new Money(linkedAcc.getCurrency(),new BigDecimal(BigInteger.ZERO));
+        this.spentToday = Money.zero(linkedAcc.getCurrency());
         this.spendDate = LocalDate.now();
     }
 
     public void freeze() {
-        if(this.status == CardStatus.ACTIVE)
+        if(this.status != CardStatus.ACTIVE)
             throw new IllegalStateException("CardStatus already FROZEN!");
         this.status = CardStatus.FROZEN;
     }
@@ -64,7 +63,7 @@ public abstract class Card {
     }
 
     public boolean canAuthorise(Money amount) throws CurrencyMismatchException {
-        if(amount == null || amount.isNegative()) return false;
+        if(amount == null || !amount.isPositive()) return false;
         if(this.status != CardStatus.ACTIVE) return false;
         if(amount.getCurrency() != this.linkedAccount.getCurrency()) return false;
 
