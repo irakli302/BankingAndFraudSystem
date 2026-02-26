@@ -43,4 +43,24 @@ public abstract class Card {
         this.spentToday = new Money(linkedAcc.getCurrency(),new BigDecimal(BigInteger.ZERO));
         this.spendDate = LocalDate.now();
     }
+
+    public void freeze() {
+        if(this.status == CardStatus.ACTIVE)
+            throw new IllegalStateException("CardStatus already FROZEN!");
+        this.status = CardStatus.FROZEN;
+    }
+
+    public void unfreeze() {
+        if(this.status != CardStatus.FROZEN)
+            throw new IllegalStateException("CardStatus must be FROZEN to UNFREEZE!");
+        this.status = CardStatus.ACTIVE;
+    }
+
+    public void close() {
+        if(this.status == CardStatus.CLOSED)
+            throw new IllegalStateException("CardStatus already CLOSED!");
+        this.status = CardStatus.CLOSED;
+    }
+
+    
 }
