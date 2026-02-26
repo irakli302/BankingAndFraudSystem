@@ -27,16 +27,16 @@ public class RuleResult {
         return  new RuleResult(Decision.BLOCK, reason);
     }
 
-    public boolean isAllow() {
-        return this.decision == Decision.ALLOW;
+    public static boolean isAllow(RuleResult result) {
+        return result.decision == Decision.ALLOW;
     }
 
-    public boolean isReview() {
-        return this.decision == Decision.REVIEW;
+    public static boolean isReview(RuleResult result) {
+        return result.decision == Decision.REVIEW;
     }
 
-    public boolean isBlock() {
-        return this.decision == Decision.BLOCK;
+    public static boolean isBlock(RuleResult result) {
+        return result.decision == Decision.BLOCK;
     }
 
     public Decision getDecision() {

@@ -89,7 +89,6 @@ public class BankService {
     public Transaction deposit(UUID accountID, Money amount, String description) throws CurrencyMismatchException {
         Account account = requireAccount(accountID);
         Transaction tx = new Deposit(account,amount,description);
-        attempts.add(tx);
         tx.approve();
         ledger.post(tx);
         return tx;
