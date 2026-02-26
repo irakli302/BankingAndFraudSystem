@@ -8,6 +8,7 @@ import bankingandfraudsystem.util.Money;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 public abstract class Card {
@@ -124,5 +125,18 @@ public abstract class Card {
 
     public LocalDate getSpendDate() {
         return this.spendDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(this == o) return true;
+        Card card = (Card) o;
+        return this.id.equals(card.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.id);
     }
 }
