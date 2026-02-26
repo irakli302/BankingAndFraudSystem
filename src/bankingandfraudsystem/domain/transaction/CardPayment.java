@@ -37,4 +37,11 @@ public class CardPayment extends Transaction {
         card.getLinkedAccount().withDraw(getAmount());
         card.recordSpend(getAmount());
     }
+
+    @Override
+    public TransactionType type() {
+        return TransactionType.CARD_PAYMENT;
+    }
+
+    
 }
