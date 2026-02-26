@@ -61,6 +61,13 @@ public abstract class Card {
             throw new IllegalStateException("CardStatus already CLOSED!");
         this.status = CardStatus.CLOSED;
     }
-
     
+
+    public void restoreDate() {
+        LocalDate today = LocalDate.now();
+        if(!today.equals(this.spendDate)){
+            this.spentToday = Money.zero(this.linkedAccount.getCurrency());
+            this.spendDate = today;
+        }
+    }
 }
