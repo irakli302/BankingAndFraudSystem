@@ -1,6 +1,7 @@
 package bankingandfraudsystem.domain.transaction;
 
 import bankingandfraudsystem.Exception.CurrencyMismatchException;
+import bankingandfraudsystem.domain.account.Account;
 import bankingandfraudsystem.domain.card.Card;
 import bankingandfraudsystem.domain.card.CardStatus;
 import bankingandfraudsystem.domain.merchant.Merchant;
@@ -43,5 +44,11 @@ public class CardPayment extends Transaction {
         return TransactionType.CARD_PAYMENT;
     }
 
-    
+    @Override
+    public boolean involves(Account account) {
+        if(account == null)
+            throw new IllegalArgumentException("Account cannot be null!");
+
+        return card.getLinkedAccount().getID().equals(account.getID());
+    }
 }
