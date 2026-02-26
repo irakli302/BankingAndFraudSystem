@@ -51,4 +51,12 @@ public class CardPayment extends Transaction {
 
         return card.getLinkedAccount().getID().equals(account.getID());
     }
+
+    public Card getCard() {
+        return this.card;
+    }
+
+    public Merchant getMerchant() {
+        return this.merchant;
+    }
 }
