@@ -62,7 +62,7 @@ public class BankService {
         return List.copyOf(customers.values());
     }
 
-    public CheckingAccount openChecking(UUID customerID, Currency currency, Money overdraftLimit) {
+    public CheckingAccount openChecking(UUID customerID, Currency currency, Money overdraftLimit) throws CurrencyMismatchException {
         Customer owner = requireCustomer(customerID);
         CheckingAccount checkingAccount = new CheckingAccount(owner,currency, AccountStatus.ACTIVE, overdraftLimit);
         accounts.put(checkingAccount.getID(), checkingAccount);

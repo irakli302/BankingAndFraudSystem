@@ -8,20 +8,24 @@ import bankingandfraudsystem.util.Money;
 public class CheckingAccount extends Account {
     private Money overdraftLimit;
 
-    public CheckingAccount(Customer owner, Currency currency, AccountStatus status, Money Limit) {
+    public CheckingAccount(Customer owner, Currency currency, AccountStatus status, Money limit) throws CurrencyMismatchException {
         super(owner, currency, status, AccountType.CHECKING);
 
-        if(overdraftLimit.isNegative()) throw new IllegalArgumentException("OverdraftLimit can't be negative!");
+        if(limit == null) throw new IllegalArgumentException("Overdraft Limit cannot be null!");
+        if(limit.isNegative()) throw new IllegalArgumentException("OverdraftLimit can't be negative!");
+        if(limit.getCurrency() != currency) throw new CurrencyMismatchException("Overdraft Limit currency mismatch");
 
-        this.overdraftLimit = Limit;
+        this.overdraftLimit = limit;
     }
 
-    public CheckingAccount(Customer owner,Money balance, Currency currency, AccountStatus status, Money Limit) {
+    public CheckingAccount(Customer owner,Money balance, Currency currency, AccountStatus status, Money limit) throws CurrencyMismatchException {
         super(owner, balance, currency, status, AccountType.CHECKING);
 
-        if(overdraftLimit.isNegative()) throw new IllegalArgumentException("OverdraftLimit can't be negative!");
+        if(limit == null) throw new IllegalArgumentException("Overdraft Limit cannot be null!");
+        if(limit.isNegative()) throw new IllegalArgumentException("OverdraftLimit can't be negative!");
+        if(limit.getCurrency() != currency) throw new CurrencyMismatchException("Overdraft Limit currency mismatch");
 
-        this.overdraftLimit = Limit;
+        this.overdraftLimit = limit;
     }
 
     public Money getOverdraftLimit() {

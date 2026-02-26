@@ -68,6 +68,7 @@ public class Money implements Comparable<Money> {
 
     @Override
     public int compareTo(Money other){
+        if(other == null) throw new IllegalArgumentException("Money cannot be null!");
         if(this.currency != other.currency){
             throw new IllegalArgumentException("Currency mismatch, please try again with correct currency!");
         }
