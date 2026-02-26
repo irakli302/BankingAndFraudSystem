@@ -61,7 +61,17 @@ public abstract class Card {
             throw new IllegalStateException("CardStatus already CLOSED!");
         this.status = CardStatus.CLOSED;
     }
-    
+
+    public boolean canAuthorise(Money amount) throws CurrencyMismatchException {
+        if(amount == null || amount.isNegative()) return false;
+        if(this.status != CardStatus.ACTIVE) return false;
+        if(amount.getCurrency() != this.linkedAccount.getCurrency()) return false;
+
+        restoreDate();
+
+        Money new_money = this.spentToday.add_Money(amount);
+        return new_money.compareTo(this.dailyLimit) <= 0;
+    }
 
     public void restoreDate() {
         LocalDate today = LocalDate.now();
