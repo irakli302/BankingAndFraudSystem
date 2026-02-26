@@ -24,5 +24,17 @@ public class CardPayment extends Transaction {
         this.card = card;
         this.merchant = merchant;
     }
-    
+
+    @Override
+    public void apply() throws CurrencyMismatchException {
+        if(card.getStatus() != CardStatus.ACTIVE)
+            throw new IllegalStateException("Card must be active!");
+
+        if(!card.canAuthorise(getAmount()))
+            throw new IllegalStateException("Card can't authorize transaction!");
+
+
+        card.getLinkedAccount().withDraw(getAmount());
+        card.recordSpend(getAmount());
+    }
 }
