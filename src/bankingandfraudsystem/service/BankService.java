@@ -174,5 +174,14 @@ public class BankService {
         }
     }
 
+    public List<Transaction>customerHistory(Customer customer) {
+        if(customer == null) throw new IllegalArgumentException("Customer cannot be null!");
 
+        List<Transaction>res = new ArrayList<Transaction>();
+        for(Transaction transaction : ledger.getHistory()) {
+            if(transaction.involvesAnyAccountOf(customer))
+                res.add(transaction);
+        }
+        return List.copyOf(res);
+    }
 }
