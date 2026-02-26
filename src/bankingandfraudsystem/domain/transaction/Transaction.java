@@ -3,6 +3,7 @@ package bankingandfraudsystem.domain.transaction;
 import bankingandfraudsystem.Exception.CurrencyMismatchException;
 import bankingandfraudsystem.domain.account.Account;
 import bankingandfraudsystem.domain.account.AccountStatus;
+import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.util.Money;
 
 import java.time.Instant;
@@ -81,6 +82,15 @@ public abstract class Transaction {
 
     private void checkPosted() {
         if(status == TransactionStatus.POSTED) throw new IllegalStateException("Transaction cannot be modified!");
+    }
+
+    public boolean involvesAnyAccountOf(Customer customer) {
+        if(customer == null) throw new IllegalArgumentException("Customer cannot be null!");
+
+        for(Account account : customer.getAccounts()) {
+            if(this.involves(account)) return true;
+        }
+        return false;
     }
 
 }

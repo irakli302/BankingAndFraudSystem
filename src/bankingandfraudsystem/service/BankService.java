@@ -144,4 +144,35 @@ public class BankService {
     public List<Transaction>listAttempts() {
         return List.copyOf(this.attempts);
     }
+
+    public List<Transaction>statement(UUID accountID) {
+        Account account = requireAccount(accountID);
+        return ledger.statementFor(account);
+    }
+
+    public void freezeAccount(UUID accountID) {
+        try {
+            requireAccount(accountID).freeze();
+        }catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void unFreezeAccount(UUID accountID) {
+        try {
+            requireAccount(accountID).unFreeze();
+        }catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void closeAccount(UUID accountID) {
+        try {
+            requireAccount(accountID).Close();
+        }catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
 }
