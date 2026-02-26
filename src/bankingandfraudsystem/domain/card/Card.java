@@ -73,6 +73,23 @@ public abstract class Card {
         return new_money.compareTo(this.dailyLimit) <= 0;
     }
 
+    public void recordSpend(Money amount) throws CurrencyMismatchException {
+        if(amount == null)
+            throw new IllegalArgumentException("Money cannot be null!");
+        if(amount.isNegative())
+            throw new IllegalArgumentException("Money cannot be negative!");
+        if(amount.getCurrency() != this.linkedAccount.getCurrency())
+            throw new CurrencyMismatchException("Currency mismatch, please try again!");
+
+        restoreDate();
+
+        Money new_money = this.spentToday.add_Money(amount);
+        if(new_money.compareTo(this.dailyLimit) > 0)
+            throw new IllegalArgumentException("Daily limit exceeded!");
+
+        this.spentToday = new_money;
+    }
+
     public void restoreDate() {
         LocalDate today = LocalDate.now();
         if(!today.equals(this.spendDate)){
