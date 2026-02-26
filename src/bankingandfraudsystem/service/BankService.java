@@ -158,7 +158,7 @@ public class BankService {
         }
     }
 
-    public void unFreezeAccount(UUID accountID) {
+    public void unfreezeAccount(UUID accountID) {
         try {
             requireAccount(accountID).unFreeze();
         }catch (RuntimeException e) {
@@ -177,11 +177,19 @@ public class BankService {
     public List<Transaction>customerHistory(Customer customer) {
         if(customer == null) throw new IllegalArgumentException("Customer cannot be null!");
 
-        List<Transaction>res = new ArrayList<Transaction>();
+        List<Transaction>res = new ArrayList<>();
         for(Transaction transaction : ledger.getHistory()) {
             if(transaction.involvesAnyAccountOf(customer))
                 res.add(transaction);
         }
         return List.copyOf(res);
+    }
+
+    public Ledger getLedger() {
+        return this.ledger;
+    }
+
+    public FraudEngine getFraudEngine() {
+        return this.fraudEngine;
     }
 }
