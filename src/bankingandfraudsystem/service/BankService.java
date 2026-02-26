@@ -99,15 +99,15 @@ public class BankService {
         Transaction tx = new Withdrawal(amount,description,account);
         FraudContext fraudContext = new FraudContext(account.getOwner(),customerHistory(account.getOwner()));
         RuleResult rule = this.fraudEngine.assess(tx,fraudContext);
-        if(rule.isAllow()) {
+        if(RuleResult.isAllow(rule)) {
             tx.approve();
             ledger.post(tx);
         }
-        else if(rule.isReview()){
+        else if(RuleResult.isReview(rule)){
             tx.markReview();
             attempts.add(tx);
         }
-        else if(rule.isBlock()){
+        else if(RuleResult.isBlock(rule)){
             tx.decline();
             attempts.add(tx);
         }
@@ -121,15 +121,15 @@ public class BankService {
         FraudContext fraudContext = new FraudContext(fromAcc.getOwner(),customerHistory(fromAcc.getOwner()));
         RuleResult rule = this.fraudEngine.assess(tx,fraudContext);
 
-        if(rule.isAllow()) {
+        if(RuleResult.isAllow(rule)) {
             tx.approve();
             ledger.post(tx);
         }
-        else if(rule.isReview()){
+        else if(RuleResult.isReview(rule)){
             tx.markReview();
             attempts.add(tx);
         }
-        else if(rule.isBlock()){
+        else if(RuleResult.isBlock(rule)){
             tx.decline();
             attempts.add(tx);
         }
