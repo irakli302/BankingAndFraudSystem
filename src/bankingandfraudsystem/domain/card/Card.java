@@ -1,4 +1,46 @@
 package bankingandfraudsystem.domain.card;
 
-public class Card {
+import bankingandfraudsystem.Exception.CurrencyMismatchException;
+import bankingandfraudsystem.domain.account.Account;
+import bankingandfraudsystem.domain.customer.Customer;
+import bankingandfraudsystem.util.Money;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.util.UUID;
+
+public abstract class Card {
+    protected final UUID id;
+    protected final Customer owner;
+    protected final Account linkedAccount;
+    protected CardStatus status;
+
+    private Money dailyLimit;
+    private Money spentToday;
+    private LocalDate spendDate;
+
+    public Card(Customer owner, Account linkedAcc,Money dailylimit) throws CurrencyMismatchException {
+        if(owner == null)
+            throw new IllegalArgumentException("Card owner cannot be null!");
+        if(linkedAcc == null)
+            throw new IllegalArgumentException("Linked account cannot be null!");
+        if(!linkedAcc.getOwner().equals(owner))
+            throw new IllegalArgumentException("Account and card owners mismatch!");
+        if(dailylimit == null)
+            throw new IllegalArgumentException("DailyLimit cannot be null!");
+        if(!dailylimit.isPositive())
+            throw new IllegalArgumentException("DailyLimit must be positive!");
+        if(dailylimit.getCurrency() != linkedAcc.getCurrency())
+            throw new CurrencyMismatchException("Currency mismatch, please try again!");
+
+
+        this.id = UUID.randomUUID();
+        this.owner = owner;
+        this.linkedAccount = linkedAcc;
+        this.dailyLimit = dailylimit;
+        this.status = CardStatus.ACTIVE;
+        this.spentToday = new Money(linkedAcc.getCurrency(),new BigDecimal(BigInteger.ZERO));
+        this.spendDate = LocalDate.now();
+    }
 }
