@@ -15,7 +15,7 @@ public class NewMerchantRule implements FraudRule {
         if(decision == null)
             throw new IllegalArgumentException("Decision cannot be null!");
         if(decision == Decision.ALLOW)
-            throw new IllegalArgumentException("Decision cannot be null!");
+            throw new IllegalArgumentException("Decision cannot be ALLOW!");
 
         this.decisionOnHit = decision;
     }
