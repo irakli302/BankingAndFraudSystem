@@ -40,6 +40,17 @@ public class Customer {
         throw new IllegalStateException("Account with ID: " + accountID + " has not be found!");
     }
 
+    public void addCard(Card card){
+        if(card == null)
+            throw new IllegalArgumentException("Card cannot be null!");
+        if(!card.getLinkedAccount().getOwner().equals(this))
+            throw new IllegalArgumentException("Card owner doesn't match, please try again!");
+        if(cards.contains(card))
+            throw new IllegalArgumentException("Card already added!");
+
+        cards.add(card);
+    }
+
     public String getFullName() {
         return this.fullName;
     }

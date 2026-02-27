@@ -6,6 +6,7 @@ import bankingandfraudsystem.domain.account.AccountStatus;
 import bankingandfraudsystem.domain.account.CheckingAccount;
 import bankingandfraudsystem.domain.account.SavingsAccount;
 import bankingandfraudsystem.domain.card.Card;
+import bankingandfraudsystem.domain.card.DebitCard;
 import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.domain.ledger.Ledger;
 import bankingandfraudsystem.domain.transaction.Deposit;
