@@ -50,6 +50,13 @@ public class BankService {
         return accounts.get(id);
     }
 
+    private Card requireCard(UUID id) {
+        if(id == null) throw new IllegalArgumentException("Card ID cannot be null!");
+        if(!cards.containsKey(id)) throw new IllegalArgumentException("Card not found!");
+
+        return cards.get(id);
+    }
+
     public Customer createCustomer(String fullName) {
         Customer customer = new Customer(fullName);
         customers.put(customer.getId(), customer);
