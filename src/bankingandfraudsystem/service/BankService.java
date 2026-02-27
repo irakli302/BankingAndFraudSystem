@@ -7,6 +7,7 @@ import bankingandfraudsystem.domain.account.CheckingAccount;
 import bankingandfraudsystem.domain.account.SavingsAccount;
 import bankingandfraudsystem.domain.card.Card;
 import bankingandfraudsystem.domain.card.DebitCard;
+import bankingandfraudsystem.domain.card.VirtualCard;
 import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.domain.ledger.Ledger;
 import bankingandfraudsystem.domain.transaction.Deposit;
@@ -166,6 +167,28 @@ public class BankService {
 
         return debitCard;
     }
+
+    public Card issueVirtualCard(UUID customerID, UUID accountID, Money dailyLimit) throws CurrencyMismatchException {
+        if(customerID == null)
+            throw new IllegalArgumentException("CustomerID cannot be null!");
+        if(accountID == null)
+            throw new IllegalArgumentException("AccountID cannot be null!");
+        if(dailyLimit == null)
+            throw new IllegalArgumentException("Money cannot be null!");
+
+        Customer customer = requireCustomer(customerID);
+        Account account = requireAccount(accountID);
+
+        if(!account.getOwner().equals(customer))
+            throw new IllegalArgumentException("Customers mismatch, please try again!");
+
+        Card virtualCard = new VirtualCard(customer,account,dailyLimit);
+        this.cards.put(virtualCard.getId(),virtualCard);
+        customer.addCard(virtualCard);
+
+        return virtualCard;
+    }
+
 
     public List<Transaction>listPostedTransactions() {
         return this.ledger.getHistory();
