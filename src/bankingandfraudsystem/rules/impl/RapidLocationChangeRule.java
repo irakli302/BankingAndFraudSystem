@@ -6,6 +6,8 @@ import bankingandfraudsystem.domain.transaction.Transaction;
 import bankingandfraudsystem.rules.*;
 
 import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
 
 public class RapidLocationChangeRule implements FraudRule {
     private Duration maxTimeBetween;
@@ -34,14 +36,17 @@ public class RapidLocationChangeRule implements FraudRule {
 
         if(!(tx instanceof CardPayment cp)) return RuleResult.allow();
 
-        for(Transaction transaction : ctx.getPostedHistory()){
+        List<Transaction>reversedHistory = ctx.getPostedHistory();
+        Collections.reverse(reversedHistory);
+
+        for(Transaction transaction : reversedHistory){
             if(transaction instanceof CardPayment cardPayment){
                 if(!cardPayment.getMerchant().getCountry().equals(cp.getMerchant().getCountry())){
                     Duration between = Duration.between(cardPayment.getCreatedAt(),cp.getCreatedAt());
 
-                    if(between.isNegative() && between.compareTo(this.maxTimeBetween) <= 0) {
+                    if(!between.isNegative() && between.compareTo(this.maxTimeBetween) <= 0) {
                         String reason = "Rapid location change detected: " + cardPayment.getMerchant().getCountry() + " → " + cp.getMerchant().getCountry() +
-                                " within " + between + " minutes!";
+                                " within " + between.toMinutes() + " minutes!";
                         return this.decisionOnHit == Decision.REVIEW ? RuleResult.review(reason) : RuleResult.block(reason);
                     }
                 }

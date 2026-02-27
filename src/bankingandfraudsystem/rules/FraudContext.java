@@ -4,7 +4,6 @@ import bankingandfraudsystem.Exception.CurrencyMismatchException;
 import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.domain.transaction.CardPayment;
 import bankingandfraudsystem.domain.transaction.Transaction;
-import bankingandfraudsystem.domain.transaction.TransactionStatus;
 import bankingandfraudsystem.util.Currency;
 import bankingandfraudsystem.util.Money;
 
