@@ -5,6 +5,7 @@ import bankingandfraudsystem.domain.account.Account;
 import bankingandfraudsystem.domain.account.AccountStatus;
 import bankingandfraudsystem.domain.account.CheckingAccount;
 import bankingandfraudsystem.domain.account.SavingsAccount;
+import bankingandfraudsystem.domain.card.Card;
 import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.domain.ledger.Ledger;
 import bankingandfraudsystem.domain.transaction.Deposit;
@@ -23,6 +24,7 @@ public class BankService {
 
     private final Map<UUID, Customer>customers = new HashMap<>();
     private final Map<UUID, Account>accounts = new HashMap<>();
+    private final Map<UUID, Card>cards = new HashMap<>();
 
     private final List<Transaction>attempts = new ArrayList<>();
 
