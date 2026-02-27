@@ -51,6 +51,15 @@ public class Customer {
         cards.add(card);
     }
 
+    public Card findCard(UUID cardID) {
+        if (cardID == null)
+            throw new IllegalArgumentException("CardID cannot be null!");
+        for(Card card : this.cards) {
+            if(card.getId() == cardID) return card;
+        }
+        throw new IllegalStateException("Card with ID: " + cardID + " has not be found!");
+    }
+
     public String getFullName() {
         return this.fullName;
     }
