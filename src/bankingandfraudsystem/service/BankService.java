@@ -146,6 +146,27 @@ public class BankService {
         return tx;
     }
 
+    public Card issueDebitCard(UUID customerID, UUID accountID, Money dailyLimit) throws CurrencyMismatchException {
+        if(customerID == null)
+            throw new IllegalArgumentException("CustomerID cannot be null!");
+        if(accountID == null)
+            throw new IllegalArgumentException("AccountID cannot be null!");
+        if(dailyLimit == null)
+            throw new IllegalArgumentException("Money cannot be null!");
+
+        Customer customer = requireCustomer(customerID);
+        Account account = requireAccount(accountID);
+
+        if(!account.getOwner().equals(customer))
+            throw new IllegalArgumentException("Customers mismatch, please try again!");
+
+        Card debitCard = new DebitCard(customer,account,dailyLimit);
+        this.cards.put(debitCard.getId(),debitCard);
+        customer.addCard(debitCard);
+
+        return debitCard;
+    }
+
     public List<Transaction>listPostedTransactions() {
         return this.ledger.getHistory();
     }
