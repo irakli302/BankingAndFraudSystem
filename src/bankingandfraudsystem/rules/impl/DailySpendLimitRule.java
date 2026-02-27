@@ -1,4 +1,17 @@
 package bankingandfraudsystem.rules.impl;
 
-public class DailySpendLimitRule {
+import bankingandfraudsystem.rules.Decision;
+import bankingandfraudsystem.rules.FraudRule;
+
+public class DailySpendLimitRule implements FraudRule {
+    private Decision decisionOnHit;
+
+    public DailySpendLimitRule(Decision decision) {
+        if(decision == null)
+            throw new IllegalArgumentException("Decision cannot be null!");
+        if(decision == Decision.ALLOW)
+            throw new IllegalArgumentException("Decision cannot be null!");
+
+        this.decisionOnHit = decision;
+    }
 }
