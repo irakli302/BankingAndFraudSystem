@@ -2,16 +2,15 @@ package bankingandfraudsystem.rules;
 
 import bankingandfraudsystem.Exception.CurrencyMismatchException;
 import bankingandfraudsystem.domain.customer.Customer;
+import bankingandfraudsystem.domain.transaction.CardPayment;
 import bankingandfraudsystem.domain.transaction.Transaction;
+import bankingandfraudsystem.domain.transaction.TransactionStatus;
 import bankingandfraudsystem.util.Currency;
 import bankingandfraudsystem.util.Money;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class FraudContext {
     private final Customer customer;
@@ -98,6 +97,19 @@ public class FraudContext {
         if(this.postedHistory.isEmpty()) return null;
 
         return this.postedHistory.getLast();
+    }
+
+    public boolean hasSeenMerchant(UUID merchantID) {
+        if(merchantID == null)
+            throw new IllegalArgumentException("MerchantID cannot be null!");
+
+        for (Transaction transaction : this.postedHistory) {
+            if(transaction instanceof CardPayment cp){
+                if(cp.getMerchant().getId().equals(merchantID))
+                    return true;
+            }
+        }
+        return false;
     }
 
     public Customer getCustomer() {
