@@ -1,10 +1,13 @@
 package bankingandfraudsystem.rules.impl;
 
-import bankingandfraudsystem.rules.Decision;
+import bankingandfraudsystem.Exception.CurrencyMismatchException;
+import bankingandfraudsystem.domain.transaction.CardPayment;
+import bankingandfraudsystem.domain.transaction.Transaction;
+import bankingandfraudsystem.rules.*;
 
 import java.time.Duration;
 
-public class RapidLocationChangeRule {
+public class RapidLocationChangeRule implements FraudRule {
     private Duration maxTimeBetween;
     private Decision decisionOnHit;
 
@@ -20,5 +23,30 @@ public class RapidLocationChangeRule {
 
         this.maxTimeBetween = maxTimeBetween;
         this.decisionOnHit = decision;
+    }
+
+    @Override
+    public RuleResult evaluate(Transaction tx, FraudContext ctx) throws CurrencyMismatchException {
+        if(tx == null)
+            throw new IllegalArgumentException("Transaction cannot be null!");
+        if(ctx == null)
+            throw new IllegalArgumentException("FraudContext cannot be null!");
+
+        if(!(tx instanceof CardPayment cp)) return RuleResult.allow();
+
+        for(Transaction transaction : ctx.getPostedHistory()){
+            if(transaction instanceof CardPayment cardPayment){
+                if(!cardPayment.getMerchant().getCountry().equals(cp.getMerchant().getCountry())){
+                    Duration between = Duration.between(cardPayment.getCreatedAt(),cp.getCreatedAt());
+
+                    if(between.isNegative() && between.compareTo(this.maxTimeBetween) <= 0) {
+                        String reason = "Rapid location change detected: " + cardPayment.getMerchant().getCountry() + " → " + cp.getMerchant().getCountry() +
+                                " within " + between + " minutes!";
+                        return this.decisionOnHit == Decision.REVIEW ? RuleResult.review(reason) : RuleResult.block(reason);
+                    }
+                }
+            }
+        }
+        return RuleResult.allow();
     }
 }
