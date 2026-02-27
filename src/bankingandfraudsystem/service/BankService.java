@@ -145,6 +145,15 @@ public class BankService {
         return tx;
     }
 
+    public Card getCard(UUID id) {
+        return requireCard(id);
+    }
+
+
+    public List<Card>listCards() {
+        return List.copyOf(cards.values());
+    }
+
     public Card issueDebitCard(UUID customerID, UUID accountID, Money dailyLimit) throws CurrencyMismatchException {
         if(customerID == null)
             throw new IllegalArgumentException("CustomerID cannot be null!");
@@ -274,6 +283,13 @@ public class BankService {
                 res.add(transaction);
         }
         return List.copyOf(res);
+    }
+
+    public List<Card>listCustomerCards(UUID customerID) {
+        if(customerID == null)
+            throw new IllegalArgumentException("CustomerID cannot be null!");
+        Customer customer = requireCustomer(customerID);
+        return customer.getCards();
     }
 
     public Ledger getLedger() {
