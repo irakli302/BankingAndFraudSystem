@@ -49,4 +49,12 @@ public class RapidLocationChangeRule implements FraudRule {
         }
         return RuleResult.allow();
     }
+
+    public Decision getDecisionOnHit() {
+        return this.decisionOnHit;
+    }
+
+    public Duration getMaxTimeBetween() {
+        return this.maxTimeBetween;
+    }
 }
