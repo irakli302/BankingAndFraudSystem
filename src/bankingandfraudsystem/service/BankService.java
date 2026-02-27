@@ -10,10 +10,8 @@ import bankingandfraudsystem.domain.card.DebitCard;
 import bankingandfraudsystem.domain.card.VirtualCard;
 import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.domain.ledger.Ledger;
-import bankingandfraudsystem.domain.transaction.Deposit;
-import bankingandfraudsystem.domain.transaction.Transaction;
-import bankingandfraudsystem.domain.transaction.Transfer;
-import bankingandfraudsystem.domain.transaction.Withdrawal;
+import bankingandfraudsystem.domain.merchant.Merchant;
+import bankingandfraudsystem.domain.transaction.*;
 import bankingandfraudsystem.rules.*;
 import bankingandfraudsystem.util.Money;
 import bankingandfraudsystem.util.Currency;
@@ -187,6 +185,46 @@ public class BankService {
         customer.addCard(virtualCard);
 
         return virtualCard;
+    }
+
+    public Transaction payByCard(UUID cardID, Merchant merchant, Money amount, String description) throws CurrencyMismatchException {
+        if(cardID == null)
+            throw new IllegalArgumentException("CardId cannot be null!");
+        if(merchant == null)
+            throw new IllegalArgumentException("Merchant cannot be null!");
+        if(amount == null)
+            throw new IllegalArgumentException("Money cannot be null!");
+        if(!amount.isPositive())
+            throw new IllegalArgumentException("Money must be positive!");
+        if(description == null)
+            throw new IllegalArgumentException("Description cannot be null!");
+        if(description.isBlank())
+            throw new IllegalArgumentException("Description cannot be blank!");
+
+
+        Card card = requireCard(cardID);
+        Transaction tx = new CardPayment(amount,description,card,merchant);
+
+        if(card.getLinkedAccount().getCurrency() != amount.getCurrency())
+            throw new CurrencyMismatchException("Currency mismatch!");
+
+        List<Transaction>hist = customerHistory(card.getOwner());
+        FraudContext fraudContext = new FraudContext(card.getOwner(),hist);
+        RuleResult rule = this.fraudEngine.assess(tx,fraudContext);
+
+        if(RuleResult.isAllow(rule)) {
+            tx.approve();
+            ledger.post(tx);
+        }
+        else if(RuleResult.isReview(rule)){
+            tx.markReview();
+            this.attempts.add(tx);
+        }
+        else if(RuleResult.isBlock(rule)){
+            tx.decline();
+            this.attempts.add(tx);
+        }
+        return tx;
     }
 
 
