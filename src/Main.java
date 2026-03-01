@@ -1,20 +1,24 @@
 import bankingandfraudsystem.domain.account.AccountStatus;
+import bankingandfraudsystem.domain.account.CheckingAccount;
+import bankingandfraudsystem.domain.card.Card;
+import bankingandfraudsystem.domain.card.DebitCard;
 import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.domain.ledger.Ledger;
+import bankingandfraudsystem.domain.merchant.Merchant;
+import bankingandfraudsystem.domain.transaction.Deposit;
 import bankingandfraudsystem.domain.transaction.Transaction;
 import bankingandfraudsystem.rules.Decision;
 import bankingandfraudsystem.rules.FraudEngine;
 import bankingandfraudsystem.rules.FraudRule;
 import bankingandfraudsystem.rules.RuleResult;
-import bankingandfraudsystem.rules.impl.LargeAmountRule;
-import bankingandfraudsystem.rules.impl.TooManyTransactionsRule;
-import bankingandfraudsystem.rules.impl.VelocitySumRule;
+import bankingandfraudsystem.rules.impl.*;
 import bankingandfraudsystem.service.BankService;
 import bankingandfraudsystem.util.Currency;
 import bankingandfraudsystem.Exception.CurrencyMismatchException;
 import bankingandfraudsystem.util.Money;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,74 +26,100 @@ public class Main {
     public static void main(String[] args) {
         try {
             Ledger ledger = new Ledger();
+            FraudRule r1 = new RapidLocationChangeRule(Duration.ofMinutes(2), Decision.REVIEW);
+            FraudRule r2 = new DailySpendLimitRule(Decision.BLOCK);
 
-            FraudRule rule1 = new LargeAmountRule(new Money(Currency.GEL, new BigDecimal("500")), Decision.REVIEW);
-            FraudRule rule2 = new TooManyTransactionsRule(5,2,Decision.REVIEW);
-            FraudRule rule3 = new VelocitySumRule(new Money(Currency.GEL, new BigDecimal("1000")),10);
+            List<FraudRule>rules = new ArrayList<>();
+            rules.add(r1);
+            rules.add(r2);
+//
+            FraudEngine fraudEngine = new FraudEngine(rules);
+            BankService bank = new BankService(ledger,fraudEngine);
 
-            List<FraudRule>rules = new ArrayList<>() ;
-            rules.add(rule1);
-            rules.add(rule2);
-            rules.add(rule3);
+            Customer customer = bank.createCustomer("John Doe!");
+            System.out.println("Customer created!");
 
-            FraudEngine engine = new FraudEngine(rules);
+            CheckingAccount account = bank.openChecking(customer.getId(),Currency.USD,new Money(Currency.USD,new BigDecimal("500")));
 
-            BankService bank = new BankService(ledger,engine);
+            bank.deposit(account.getID(),new Money(Currency.USD,new BigDecimal("1000")),"Initial Deposit!");
 
-            var customer = bank.createCustomer("Test User");
-            var checkingAccount = bank.openChecking(customer.getId(),Currency.GEL, new Money(Currency.GEL, new BigDecimal("200")));
-            var savingAccount = bank.openSavings(customer.getId(),Currency.GEL,new Money(Currency.GEL,new BigDecimal("50")),10);
+            Card debitCard = bank.issueDebitCard(customer.getId(),account.getID(), new Money(Currency.USD,new BigDecimal("300")));
 
-            System.out.println("\n== Deposit 300 EUR to Checking ==");
-            var deposit = bank.deposit(checkingAccount.getID(),new Money(Currency.GEL,new BigDecimal("300")),"Initial Deposit");
-            System.out.println(deposit.getStatus() + " | balance=" + checkingAccount.getBalance());
+            Merchant merchant = new Merchant("Amazon", "US");
 
-            System.out.println("\n== Withdraw 200 GEL (should REVIEW by LargeAmountRule) ==");
-            var w = bank.withdraw(checkingAccount.getID(),
-                    new Money(Currency.GEL, new BigDecimal("200")),
-                    "Big withdraw");
-            System.out.println(w.getStatus() + " | balance=" + checkingAccount.getBalance());
-            System.out.println("attempts=" + bank.listAttempts().size());
+            Transaction t1 = bank.payByCard(debitCard.getId(),merchant,new Money(Currency.USD,new BigDecimal("100")),"Shopping!");
+            System.out.println("t1 decision: " + t1.getStatus());
 
-            System.out.println("\n== Withdraw 600 GEL (should REVIEW by LargeAmountRule) ==");
-            var w1 = bank.withdraw(checkingAccount.getID(),
-                    new Money(Currency.GEL, new BigDecimal("600")),
-                    "Big withdraw");
-            System.out.println(w1.getStatus() + " | balance=" + checkingAccount.getBalance());
-            System.out.println("attempts=" + bank.listAttempts().size());
 
-            System.out.println("\n== Transfer 50 EUR Checking -> Savings ==");
-            var transfer = bank.transfer(checkingAccount.getID(),savingAccount.getID(),new Money(Currency.GEL,new BigDecimal("50")),"move money");
-            System.out.println(transfer.getStatus() + " | checking=" + checkingAccount.getBalance() + " | savings=" + savingAccount.getBalance());
+//            FraudRule rule1 = new LargeAmountRule(new Money(Currency.GEL, new BigDecimal("500")), Decision.REVIEW);
+//            FraudRule rule2 = new TooManyTransactionsRule(5,2,Decision.REVIEW);
+//            FraudRule rule3 = new VelocitySumRule(new Money(Currency.GEL, new BigDecimal("1000")),10);
+//
+//            List<FraudRule>rules = new ArrayList<>() ;
+//            rules.add(rule1);
+//            rules.add(rule2);
+//            rules.add(rule3);
+//
+//            FraudEngine engine = new FraudEngine(rules);
+//
+//            BankService bank = new BankService(ledger,engine);
+//
+//            var customer = bank.createCustomer("Test User");
+//            var checkingAccount = bank.openChecking(customer.getId(),Currency.GEL, new Money(Currency.GEL, new BigDecimal("200")));
+//            var savingAccount = bank.openSavings(customer.getId(),Currency.GEL,new Money(Currency.GEL,new BigDecimal("50")),10);
+//
+//            System.out.println("\n== Deposit 300 EUR to Checking ==");
+//            var deposit = bank.deposit(checkingAccount.getID(),new Money(Currency.GEL,new BigDecimal("300")),"Initial Deposit");
+//            System.out.println(deposit.getStatus() + " | balance=" + checkingAccount.getBalance());
+//
+//            System.out.println("\n== Withdraw 200 GEL (should REVIEW by LargeAmountRule) ==");
+//            var w = bank.withdraw(checkingAccount.getID(),
+//                    new Money(Currency.GEL, new BigDecimal("200")),
+//                    "Big withdraw");
+//            System.out.println(w.getStatus() + " | balance=" + checkingAccount.getBalance());
+//            System.out.println("attempts=" + bank.listAttempts().size());
+//
+//            System.out.println("\n== Withdraw 600 GEL (should REVIEW by LargeAmountRule) ==");
+//            var w1 = bank.withdraw(checkingAccount.getID(),
+//                    new Money(Currency.GEL, new BigDecimal("600")),
+//                    "Big withdraw");
+//            System.out.println(w1.getStatus() + " | balance=" + checkingAccount.getBalance());
+//            System.out.println("attempts=" + bank.listAttempts().size());
+//
+//            System.out.println("\n== Transfer 50 EUR Checking -> Savings ==");
+//            var transfer = bank.transfer(checkingAccount.getID(),savingAccount.getID(),new Money(Currency.GEL,new BigDecimal("50")),"move money");
+//            System.out.println(transfer.getStatus() + " | checking=" + checkingAccount.getBalance() + " | savings=" + savingAccount.getBalance());
+//
+//            System.out.println("\n== Transfer 200 EUR Checking -> Savings ==");
+//            var transfer2 = bank.transfer(checkingAccount.getID(),savingAccount.getID(),new Money(Currency.GEL,new BigDecimal("500")),"move money");
+//            System.out.println(transfer2.getStatus() + " | checking=" + checkingAccount.getBalance() + " | savings=" + savingAccount.getBalance());
+//
+//            System.out.println("\n== LEDGER (POSTED) ==");
+//            List<Transaction>postedTransactions = bank.getLedger().getHistory();
+//
+//            for(Transaction tx : postedTransactions) {
+//                System.out.println(tx.type() + " | " + tx.getStatus() + " | " + tx.getAmount());
+//            }
+//
+//            System.out.println("\n== ATTEMPTS (REVIEW/BLOCK) ==");
+//            List<Transaction>transactionsAttempts = bank.listAttempts();
+//
+//            for(Transaction tx : transactionsAttempts) {
+//                System.out.println(tx.type() + " | " + tx.getStatus() + " | " + tx.getAmount());
+//            }
+//
+//            System.out.println("\n== Statement for Checking ==");
+//            List<Transaction>statment = bank.statement(checkingAccount.getID());
+//
+//            for(Transaction tx : statment) {
+//                System.out.println(tx.type() + " | " + tx.getStatus() + " | " + tx.getAmount());
+//            }
 
-            System.out.println("\n== Transfer 200 EUR Checking -> Savings ==");
-            var transfer2 = bank.transfer(checkingAccount.getID(),savingAccount.getID(),new Money(Currency.GEL,new BigDecimal("500")),"move money");
-            System.out.println(transfer2.getStatus() + " | checking=" + checkingAccount.getBalance() + " | savings=" + savingAccount.getBalance());
-
-            System.out.println("\n== LEDGER (POSTED) ==");
-            List<Transaction>postedTransactions = bank.getLedger().getHistory();
-
-            for(Transaction tx : postedTransactions) {
-                System.out.println(tx.type() + " | " + tx.getStatus() + " | " + tx.getAmount());
-            }
-
-            System.out.println("\n== ATTEMPTS (REVIEW/BLOCK) ==");
-            List<Transaction>transactionsAttempts = bank.listAttempts();
-
-            for(Transaction tx : transactionsAttempts) {
-                System.out.println(tx.type() + " | " + tx.getStatus() + " | " + tx.getAmount());
-            }
-
-            System.out.println("\n== Statement for Checking ==");
-            List<Transaction>statment = bank.statement(checkingAccount.getID());
-
-            for(Transaction tx : statment) {
-                System.out.println(tx.type() + " | " + tx.getStatus() + " | " + tx.getAmount());
-            }
-
-        }catch(CurrencyMismatchException e) {
+        }
+        catch(CurrencyMismatchException e) {
             System.out.println(e.getMessage());
-        }catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }

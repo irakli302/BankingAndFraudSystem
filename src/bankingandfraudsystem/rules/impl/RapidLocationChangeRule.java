@@ -6,6 +6,7 @@ import bankingandfraudsystem.domain.transaction.Transaction;
 import bankingandfraudsystem.rules.*;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class RapidLocationChangeRule implements FraudRule {
     }
 
     @Override
-    public RuleResult evaluate(Transaction tx, FraudContext ctx) throws CurrencyMismatchException {
+    public RuleResult evaluate(Transaction tx, FraudContext ctx) {
         if(tx == null)
             throw new IllegalArgumentException("Transaction cannot be null!");
         if(ctx == null)
@@ -36,7 +37,7 @@ public class RapidLocationChangeRule implements FraudRule {
 
         if(!(tx instanceof CardPayment cp)) return RuleResult.allow();
 
-        List<Transaction>reversedHistory = ctx.getPostedHistory();
+        List<Transaction>reversedHistory = new ArrayList<>(ctx.getPostedHistory());
         Collections.reverse(reversedHistory);
 
         for(Transaction transaction : reversedHistory){
@@ -50,6 +51,7 @@ public class RapidLocationChangeRule implements FraudRule {
                         return this.decisionOnHit == Decision.REVIEW ? RuleResult.review(reason) : RuleResult.block(reason);
                     }
                 }
+                return RuleResult.allow();
             }
         }
         return RuleResult.allow();

@@ -29,7 +29,7 @@ public class FraudEngine {
 
             if(result.getDecision() == Decision.BLOCK) return result;
 
-            if(result.getDecision() == Decision.REVIEW && best.getDecision() == Decision.ALLOW) best = result;
+            if(result.getDecision() == Decision.REVIEW || best.getDecision() == Decision.ALLOW) best = result;
         }
 
         return best;
