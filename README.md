@@ -99,7 +99,6 @@ domain/
 
 rules/
 service/
-storage/
 exceptions/
 util/
 
@@ -125,10 +124,6 @@ Contains business entities:
 ### 🛠️ Service Layer
 - BankService (application façade)
 - Coordinates repositories, ledger, and fraud engine
-
-### 🗄️ Storage Layer
-- In-memory repositories
-- No external database required
 
 ---
 
