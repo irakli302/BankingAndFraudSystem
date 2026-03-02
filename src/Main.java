@@ -1,16 +1,12 @@
-import bankingandfraudsystem.domain.account.AccountStatus;
 import bankingandfraudsystem.domain.account.CheckingAccount;
 import bankingandfraudsystem.domain.card.Card;
-import bankingandfraudsystem.domain.card.DebitCard;
 import bankingandfraudsystem.domain.customer.Customer;
 import bankingandfraudsystem.domain.ledger.Ledger;
 import bankingandfraudsystem.domain.merchant.Merchant;
-import bankingandfraudsystem.domain.transaction.Deposit;
 import bankingandfraudsystem.domain.transaction.Transaction;
 import bankingandfraudsystem.rules.Decision;
 import bankingandfraudsystem.rules.FraudEngine;
 import bankingandfraudsystem.rules.FraudRule;
-import bankingandfraudsystem.rules.RuleResult;
 import bankingandfraudsystem.rules.impl.*;
 import bankingandfraudsystem.service.BankService;
 import bankingandfraudsystem.util.Currency;
@@ -29,10 +25,8 @@ public class Main {
             FraudRule r1 = new RapidLocationChangeRule(Duration.ofMinutes(2), Decision.REVIEW);
             FraudRule r2 = new DailySpendLimitRule(Decision.BLOCK);
 
-            List<FraudRule>rules = new ArrayList<>();
-            rules.add(r1);
-            rules.add(r2);
-//
+            List<FraudRule>rules = List.of(r1,r2);
+
             FraudEngine fraudEngine = new FraudEngine(rules);
             BankService bank = new BankService(ledger,fraudEngine);
 
@@ -50,6 +44,26 @@ public class Main {
             Transaction t1 = bank.payByCard(debitCard.getId(),merchant,new Money(Currency.USD,new BigDecimal("100")),"Shopping!");
             System.out.println("t1 decision: " + t1.getStatus());
 
+            Transaction t2 = bank.payByCard(debitCard.getId(),merchant,new Money(Currency.USD,new BigDecimal("250")),"Big purchase!");
+            System.out.println("t2 decision: " + t2.getStatus());
+
+            Merchant tokyoShop = new Merchant("TokyoShop", "JP");
+
+            Transaction t3 = bank.payByCard(
+                    debitCard.getId(),
+                    tokyoShop,
+                    new Money(Currency.USD, new BigDecimal("50")),
+                    "Japan purchase"
+            );
+
+            System.out.println("t3 decision: " + t3.getStatus());
+
+            Transaction w1 = bank.withdraw(account.getID(),new Money(Currency.USD, new BigDecimal("50")),"ATM");
+
+            System.out.println("Withdraw decision: " + w1.getStatus());
+
+            System.out.println("Ledger size: " + bank.getLedger().getHistory().size());
+            System.out.println("Attempts size: " + bank.listAttempts().size());
 
 //            FraudRule rule1 = new LargeAmountRule(new Money(Currency.GEL, new BigDecimal("500")), Decision.REVIEW);
 //            FraudRule rule2 = new TooManyTransactionsRule(5,2,Decision.REVIEW);

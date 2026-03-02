@@ -12,7 +12,9 @@ public class FraudEngine {
     public FraudEngine(List<FraudRule>fraudRules) {
         if(fraudRules == null) throw new IllegalArgumentException("Rules cannot be null!");
 
-        if(fraudRules.contains(null)) throw new IllegalArgumentException("Rules list contains null!");
+        if (fraudRules.stream().anyMatch(java.util.Objects::isNull)) {
+            throw new IllegalArgumentException("Rules list contains null!");
+        }
 
         this.rules = List.copyOf(fraudRules);
     }
